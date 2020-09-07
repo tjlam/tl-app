@@ -17,12 +17,21 @@
 
 const ipc = require('node-ipc');
 
-ipc.config.id = 'publisher-process';
+ipc.config.id = 'publisher';
 ipc.config.retry = 1500;
-ipc.config.silent = true;
-ipc.connectTo('publisher-process', () => {
-  ipc.of['jest-observer'].on('connect', () => {
-    ipc.of['jest-observer'].emit('a-unique-message-name', "The message we send");
+
+const {PLAYER_EVENT, TRACK_ID, DURATION_MS, POSITION_MS} = process.env;
+const spotifyData = {
+    PLAYER_EVENT,
+    TRACK_ID,
+    DURATION_MS,
+    POSITION_MS
+};
+
+ipc.connectTo('main', () => {
+  ipc.of.main.on('connect', () => {
+    ipc.of.main.emit('SPOTIFY_DATA', spotifyData);
+    process.exit();
   });
 });
 

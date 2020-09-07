@@ -93,11 +93,17 @@ client.on('connect', () => {
 
 const ipc = require('node-ipc');
 
-ipc.config.id = 'main-process';
+ipc.config.id = 'main';
 ipc.config.retry = 1500;
-ipc.config.silent = true;
-ipc.serve(() => ipc.server.on('a-unique-message-name', message => {
-  console.log(message);
-}));
+
+ipc.serve(() => {
+    ipc.server.on('SPOTIFY_DATA', (message, socket) => {
+        console.log(message);
+    });
+
+    ipc.server.on('socket.disconnected', () => {
+        ipc.log('client disconnected');
+    });
+});
 ipc.server.start();
 
