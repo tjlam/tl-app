@@ -12,6 +12,6 @@ client.on('connect', () => {
     client.publish('tyler/spotify/event', PLAYER_EVENT);
     client.publish('tyler/spotify/trackId', TRACK_ID);
     client.publish('tyler/spotify/duration', DURATION_MS);
-    client.publish('tyler/spotify/position', DURATION_MS);
+    client.publish('tyler/spotify/position', POSITION_MS);
 });
 
