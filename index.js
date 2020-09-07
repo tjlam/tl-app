@@ -26,13 +26,13 @@ function currentTime() {
 function displayCurrentDateTime() {
     const { date, month, year, hour, minutes, seconds } = currentTime();
     document.getElementById('datetime').innerText = `${date} ${month} ${year} and ${hour}:${minutes}:${seconds}`;
-
     var t = setTimeout(displayCurrentDateTime, 1000);
 }
 
-function getWeather() {
-
-}
+function getSpotify() {
+    const {PLAYER_EVENT} = process.env;
+    console.log(process.env);
+};
 
 anime({
     targets: '#spinny',
