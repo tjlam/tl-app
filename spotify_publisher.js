@@ -9,6 +9,7 @@ client.on('connect', () => {
     console.log(`Spotify track duration: `, DURATION_MS);
     console.log(`spotify: `, process.env);
 
-    client.publish('tyler/spotify/event', { PLAYER_EVENT, TRACK_ID });
+    client.publish('tyler/spotify/event', PLAYER_EVENT);
+    client.publish('tyler/spotify/trackId', TRACK_ID);
 });
 
