@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const { BROKER_URL } = require('./config');
 
 const mqtt = require('mqtt');
@@ -104,6 +104,10 @@ ipc.serve(() => {
     ipc.server.on('socket.disconnected', () => {
         ipc.log('client disconnected');
     });
+
+    ipc.server.on('error', (err) => {
+        console.log(err);
+    })
 });
 ipc.server.start();
 
