@@ -46,13 +46,11 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 client.on('connect', () => {
-    client.subscribe('tyler/test')
+    client.subscribe(['tyler/spotify/event', 'tyler/spotify/trackId', 'tyler/spotify/duration']);
   });
   
   client.on('message', (topic, message) => {
-    if(topic === 'tyler/spotify/event') {
-      console.log(`ah ah`, message.toString());
-    }
+    console.log(`ah ah`, message.toString());
   });
 
 
