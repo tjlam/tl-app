@@ -1,4 +1,5 @@
 const { WEATHER_API_KEY } = require('./constants');
+const { ipcRenderer } = require('electron');
 
 function currentTime() {
     let ts = Date.now();
@@ -29,14 +30,13 @@ function displayCurrentDateTime() {
     var t = setTimeout(displayCurrentDateTime, 1000);
 }
 
-function getSpotify() {
-    const {PLAYER_EVENT} = process.env;
-    console.log(process.env);
-};
-
 anime({
     targets: '#spinny',
     translateX: 250
 })
+
+ipcRenderer.on('spotify-state', (event, spotifyData) => {
+    console.log(spotifyData);
+});
 
 displayCurrentDateTime();
