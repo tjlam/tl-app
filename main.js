@@ -43,14 +43,33 @@ app.on('activate', () => {
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// handle mqtt events from spotfiy 
 client.on('connect', () => {
-    client.subscribe(['tyler/spotify/event', 'tyler/spotify/trackId', 'tyler/spotify/duration']);
-  });
-  
-  client.on('message', (topic, message) => {
-    console.log(`ah ah`, message.toString());
-  });
+        client.subscribe([
+            'tyler/spotify/event',
+            'tyler/spotify/trackId', 
+            'tyler/spotify/duration', 
+            'tyler/spotify/position'
+        ]);
+    });
+
+    client.on('message', (topic, message) => {
+        switch(topic) {
+            case 'tyler/spotify/event':
+                console.log(`Spotify Event:`, message.toString());
+                break;
+            case 'tyler/spotify/trackId':
+                console.log('Spotify TrackId', message.toString());
+                break;
+            case 'tyler/spotify/duration':
+                console.log('Spotify Duration', message.toString());
+                break;
+            case 'tyler/spotify/position':
+                console.log('Spotify position', message.toString());
+                break;
+            default:
+                break;
+        }
+});
 
 
