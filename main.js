@@ -41,14 +41,6 @@ app.on('window-all-closed', () => {
   }
 })
 
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    win = createWindow();
-  }
-})
-
 // handle mqtt events from spotify
 const SPOTIFY_STATE = {
     event: null,
@@ -66,30 +58,30 @@ client.on('connect', () => {
         ]);
     });
 
-    client.on('message', (topic, message) => {
-        switch(topic) {
-            case 'tyler/spotify/event':
-                console.log(`Spotify Event:`, message.toString());
-                SPOTIFY_STATE.event = message.toString();
-                break;
-            case 'tyler/spotify/trackId':
-                console.log('Spotify TrackId', message.toString());
-                SPOTIFY_STATE.trackId = message.toString();
-                break;
-            case 'tyler/spotify/duration':
-                console.log('Spotify Duration', message.toString());
-                SPOTIFY_STATE.duration = message.toString();
-                break;
-            case 'tyler/spotify/position':
-                console.log('Spotify Position', message.toString());
-                SPOTIFY_STATE.position = message.toString();
-                break;
-            default:
-                break;
-        }
-        // send updated spotify state
-        win.webContents.send('spotify-state', SPOTIFY_STATE);
-});
+//     client.on('message', (topic, message) => {
+//         switch(topic) {
+//             case 'tyler/spotify/event':
+//                 console.log(`Spotify Event:`, message.toString());
+//                 SPOTIFY_STATE.event = message.toString();
+//                 break;
+//             case 'tyler/spotify/trackId':
+//                 console.log('Spotify TrackId', message.toString());
+//                 SPOTIFY_STATE.trackId = message.toString();
+//                 break;
+//             case 'tyler/spotify/duration':
+//                 console.log('Spotify Duration', message.toString());
+//                 SPOTIFY_STATE.duration = message.toString();
+//                 break;
+//             case 'tyler/spotify/position':
+//                 console.log('Spotify Position', message.toString());
+//                 SPOTIFY_STATE.position = message.toString();
+//                 break;
+//             default:
+//                 break;
+//         }
+//         // send updated spotify state
+//         win.webContents.send('spotify-state', SPOTIFY_STATE);
+// });
 
 const ipc = require('node-ipc');
 
@@ -110,4 +102,19 @@ ipc.serve(() => {
     })
 });
 ipc.server.start();
+// const { exec } = require('child_process');
+
+// exec('node server.js', (error, stdout, stderr) => {
+//     if (error) {
+//         console.log(`error: ${error.message}`);
+//         return;
+//     }
+
+//     if (stderr) {
+//         console.log(`sderr: ${stderr}`);
+//         return;
+//     }
+
+//     console.log(`stoud: ${stdout}`);
+// });
 
