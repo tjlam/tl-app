@@ -88,7 +88,7 @@ const ipc = require('node-ipc');
 ipc.config.id = 'main';
 ipc.config.retry = 1500;
 
-ipc.serve(() => {
+ipc.serve('/usr/local/bin/app.main', () => {
     ipc.server.on('SPOTIFY_DATA', (message, socket) => {
         console.log(message);
     });
