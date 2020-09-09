@@ -1,8 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const { BROKER_URL } = require('./config');
 
-// const mqtt = require('mqtt');
-// const client = mqtt.connect(BROKER_URL);
+const mqtt = require('mqtt');
+const client = mqtt.connect(BROKER_URL);
 let win;
 
 // setup window
@@ -42,64 +42,64 @@ app.on('window-all-closed', () => {
 })
 
 // handle mqtt events from spotify
-// const SPOTIFY_STATE = {
-//     event: null,
-//     trackId: null,
-//     duration: null,
-//     position: null
-// }
+const SPOTIFY_STATE = {
+    event: null,
+    trackId: null,
+    duration: null,
+    position: null
+}
 
-// client.on('connect', () => {
-//         client.subscribe([
-//             'tyler/spotify/event',
-//             'tyler/spotify/trackId', 
-//             'tyler/spotify/duration', 
-//             'tyler/spotify/position'
-//         ]);
+client.on('connect', () => {
+        client.subscribe([
+            'tyler/spotify/event',
+            'tyler/spotify/trackId', 
+            'tyler/spotify/duration', 
+            'tyler/spotify/position'
+        ]);
+    });
+
+    client.on('message', (topic, message) => {
+        switch(topic) {
+            case 'tyler/spotify/event':
+                console.log(`Spotify Event:`, message.toString());
+                SPOTIFY_STATE.event = message.toString();
+                break;
+            case 'tyler/spotify/trackId':
+                console.log('Spotify TrackId', message.toString());
+                SPOTIFY_STATE.trackId = message.toString();
+                break;
+            case 'tyler/spotify/duration':
+                console.log('Spotify Duration', message.toString());
+                SPOTIFY_STATE.duration = message.toString();
+                break;
+            case 'tyler/spotify/position':
+                console.log('Spotify Position', message.toString());
+                SPOTIFY_STATE.position = message.toString();
+                break;
+            default:
+                break;
+        }
+        // send updated spotify state
+        win.webContents.send('spotify-state', SPOTIFY_STATE);
+});
+
+// const ipc = require('node-ipc');
+
+// ipc.config.id = 'main';
+// ipc.config.retry = 1500;
+
+// ipc.serve('/usr/local/bin/app.main', () => {
+//     ipc.server.on('SPOTIFY_DATA', (message, socket) => {
+//         console.log(message);
 //     });
 
-//     client.on('message', (topic, message) => {
-//         switch(topic) {
-//             case 'tyler/spotify/event':
-//                 console.log(`Spotify Event:`, message.toString());
-//                 SPOTIFY_STATE.event = message.toString();
-//                 break;
-//             case 'tyler/spotify/trackId':
-//                 console.log('Spotify TrackId', message.toString());
-//                 SPOTIFY_STATE.trackId = message.toString();
-//                 break;
-//             case 'tyler/spotify/duration':
-//                 console.log('Spotify Duration', message.toString());
-//                 SPOTIFY_STATE.duration = message.toString();
-//                 break;
-//             case 'tyler/spotify/position':
-//                 console.log('Spotify Position', message.toString());
-//                 SPOTIFY_STATE.position = message.toString();
-//                 break;
-//             default:
-//                 break;
-//         }
-//         // send updated spotify state
-//         win.webContents.send('spotify-state', SPOTIFY_STATE);
+//     ipc.server.on('socket.disconnected', () => {
+//         ipc.log('client disconnected');
+//     });
+
+//     ipc.server.on('error', (err) => {
+//         console.log(err);
+//     })
 // });
-
-const ipc = require('node-ipc');
-
-ipc.config.id = 'main';
-ipc.config.retry = 1500;
-
-ipc.serve('/usr/local/bin/app.main', () => {
-    ipc.server.on('SPOTIFY_DATA', (message, socket) => {
-        console.log(message);
-    });
-
-    ipc.server.on('socket.disconnected', () => {
-        ipc.log('client disconnected');
-    });
-
-    ipc.server.on('error', (err) => {
-        console.log(err);
-    })
-});
 // ipc.server.start();
 
