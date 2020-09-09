@@ -1,8 +1,8 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const { BROKER_URL } = require('./config');
 
-const mqtt = require('mqtt');
-const client = mqtt.connect(BROKER_URL);
+// const mqtt = require('mqtt');
+// const client = mqtt.connect(BROKER_URL);
 let win;
 
 // setup window
