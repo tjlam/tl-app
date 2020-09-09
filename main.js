@@ -101,5 +101,5 @@ ipc.serve('/usr/local/bin/app.main', () => {
         console.log(err);
     })
 });
-ipc.server.start();
+// ipc.server.start();
 
