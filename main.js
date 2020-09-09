@@ -2,7 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const { BROKER_URL } = require('./config');
 
 const mqtt = require('mqtt');
-const client = mqtt.connect(BROKER_URL);
+const client = mqtt.connect('mqtt://192.168.4.70');
 let win;
 
 // setup window
