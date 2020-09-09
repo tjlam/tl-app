@@ -42,21 +42,21 @@ app.on('window-all-closed', () => {
 })
 
 // handle mqtt events from spotify
-const SPOTIFY_STATE = {
-    event: null,
-    trackId: null,
-    duration: null,
-    position: null
-}
+// const SPOTIFY_STATE = {
+//     event: null,
+//     trackId: null,
+//     duration: null,
+//     position: null
+// }
 
-client.on('connect', () => {
-        client.subscribe([
-            'tyler/spotify/event',
-            'tyler/spotify/trackId', 
-            'tyler/spotify/duration', 
-            'tyler/spotify/position'
-        ]);
-    });
+// client.on('connect', () => {
+//         client.subscribe([
+//             'tyler/spotify/event',
+//             'tyler/spotify/trackId', 
+//             'tyler/spotify/duration', 
+//             'tyler/spotify/position'
+//         ]);
+//     });
 
 //     client.on('message', (topic, message) => {
 //         switch(topic) {
@@ -83,7 +83,7 @@ client.on('connect', () => {
 //         win.webContents.send('spotify-state', SPOTIFY_STATE);
 // });
 
-const ipc = require('node-ipc');
+// const ipc = require('node-ipc');
 
 // ipc.config.id = 'main';
 // ipc.config.retry = 1500;
