@@ -85,36 +85,21 @@ app.on('window-all-closed', () => {
 
 const ipc = require('node-ipc');
 
-// ipc.config.id = 'main';
-// ipc.config.retry = 1500;
+ipc.config.id = 'main';
+ipc.config.retry = 1500;
 
-// ipc.serve('/usr/local/bin/app.main', () => {
-//     ipc.server.on('SPOTIFY_DATA', (message, socket) => {
-//         console.log(message);
-//     });
+ipc.serve('/usr/local/bin/app.main', () => {
+    ipc.server.on('SPOTIFY_DATA', (message, socket) => {
+        console.log(message);
+    });
 
-//     ipc.server.on('socket.disconnected', () => {
-//         ipc.log('client disconnected');
-//     });
+    ipc.server.on('socket.disconnected', () => {
+        ipc.log('client disconnected');
+    });
 
-//     ipc.server.on('error', (err) => {
-//         console.log(err);
-//     })
-// });
-// ipc.server.start();
-// const { exec } = require('child_process');
-
-// exec('node server.js', (error, stdout, stderr) => {
-//     if (error) {
-//         console.log(`error: ${error.message}`);
-//         return;
-//     }
-
-//     if (stderr) {
-//         console.log(`sderr: ${stderr}`);
-//         return;
-//     }
-
-//     console.log(`stoud: ${stdout}`);
-// });
+    ipc.server.on('error', (err) => {
+        console.log(err);
+    })
+});
+ipc.server.start();
 
