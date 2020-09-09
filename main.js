@@ -83,7 +83,7 @@ app.on('window-all-closed', () => {
 //         win.webContents.send('spotify-state', SPOTIFY_STATE);
 // });
 
-// const ipc = require('node-ipc');
+const ipc = require('node-ipc');
 
 // ipc.config.id = 'main';
 // ipc.config.retry = 1500;
