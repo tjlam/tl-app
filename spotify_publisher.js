@@ -20,8 +20,6 @@ const ipc = require('node-ipc');
 ipc.config.id = 'publisher';
 ipc.config.retry = 1500;
 ipc.config.maxRetries = 2;
-ipc.config.socketRoot = '/usr/local/bin/';
-ipc.config.appspace = 'app.';
 
 const {PLAYER_EVENT, TRACK_ID, DURATION_MS, POSITION_MS} = process.env;
 const spotifyData = {

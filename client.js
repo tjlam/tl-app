@@ -11,7 +11,7 @@ ipc.connectTo(
             function(){
                 ipc.log('## connected to world ##'.rainbow, ipc.config.delay);
                 ipc.of.world.emit(
-                    'message',  //any event or message type your server listens for
+                    'unique-message',  //any event or message type your server listens for
                     'hello'
                 )
                 process.exit();
