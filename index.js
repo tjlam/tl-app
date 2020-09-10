@@ -1,5 +1,5 @@
 const { WEATHER_API_KEY } = require('./constants');
-const { ipcRenderer } = require('electron');
+const { ipc } = require('node-ipc');
 
 function currentTime() {
     let ts = Date.now();
@@ -35,8 +35,22 @@ anime({
     translateX: 250
 })
 
-ipcRenderer.on('spotify-state', (event, spotifyData) => {
-    console.log(spotifyData);
-});
-
 displayCurrentDateTime();
+
+ipc.config.id = 'main';
+ipc.config.retry = 1500;
+
+ipc.serve(() => {
+    ipc.server.on('SPOTIFY_DATA', (message, socket) => {
+        console.log(message);
+    });
+
+    ipc.server.on('socket.disconnected', () => {
+        ipc.log('client disconnected');
+    });
+
+    ipc.server.on('error', (err) => {
+        console.log(err);
+    })
+});
+ipc.server.start();
