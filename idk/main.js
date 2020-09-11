@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const ipc = require('node-ipc');
+const { fork } = require('child_process');
+const path = require('path');
 
 // setup window
 function createWindow () {
@@ -17,25 +18,6 @@ function createWindow () {
 
     // Open the DevTools.
     win.webContents.openDevTools()
-
-
-    ipc.config.id = 'world';
-    ipc.config.retry = 1500;
-
-    ipc.serve(() => {
-        ipc.server.on('message', (message, socket) => {
-            console.log(message);
-        });
-
-        ipc.server.on('socket.disconnected', () => {
-            ipc.log('client disconnected');
-        });
-
-        ipc.server.on('error', (err) => {
-            console.log(err);
-        })
-    });
-    ipc.server.start();
 }
 
 // This method will be called when Electron has finished
@@ -54,20 +36,10 @@ app.on('window-all-closed', () => {
   }
 })
 
-ipc.config.id = 'world';
-ipc.config.retry = 1500;
-
-ipc.serve(() => {
-    ipc.server.on('message', (message, socket) => {
-        console.log(message);
-    });
-
-    ipc.server.on('socket.disconnected', () => {
-        ipc.log('client disconnected');
-    });
-
-    ipc.server.on('error', (err) => {
-        console.log(err);
-    })
+const p = fork(path.join(__dirname, 'child.js'), ['hello'], {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
 });
-ipc.server.start();
+
+p.on('message', (m) => {
+    console.log(`main got it`, m);
+})
