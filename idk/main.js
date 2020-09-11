@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+const ipc = require('node-ipc');
 
 // setup window
 function createWindow () {
@@ -17,13 +18,12 @@ function createWindow () {
     // Open the DevTools.
     win.webContents.openDevTools()
 
-    const ipc = require('node-ipc');
 
-    ipc.config.id = 'main';
+    ipc.config.id = 'world';
     ipc.config.retry = 1500;
 
     ipc.serve(() => {
-        ipc.server.on('SPOTIFY_DATA', (message, socket) => {
+        ipc.server.on('message', (message, socket) => {
             console.log(message);
         });
 
