@@ -53,3 +53,21 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+ipc.config.id = 'world';
+ipc.config.retry = 1500;
+
+ipc.serve(() => {
+    ipc.server.on('message', (message, socket) => {
+        console.log(message);
+    });
+
+    ipc.server.on('socket.disconnected', () => {
+        ipc.log('client disconnected');
+    });
+
+    ipc.server.on('error', (err) => {
+        console.log(err);
+    })
+});
+ipc.server.start();
