@@ -1,36 +1,30 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const { BROKER_URL } = require('./config');
-
-// const mqtt = require('mqtt');
-// const client = mqtt.connect('mqtt://192.168.4.70');
-let win;
+const { fork } = require('child_process');
+const path = require('path');
 
 // setup window
 function createWindow () {
-  // Create the browser window.
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  })
+    // Create the browser window.
+    const win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+        nodeIntegration: true
+        }
+    })
 
-  // and load the index.html of the app.
-  win.loadFile('index.html')
+    // and load the index.html of the app.
+    win.loadFile('index.html')
 
-  // Open the DevTools.
-  win.webContents.openDevTools()
-  console.log('alsasdfasdf;');
-
-  return win;
+    // Open the DevTools.
+    win.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-    win = createWindow();
+    createWindow();
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -42,68 +36,10 @@ app.on('window-all-closed', () => {
   }
 })
 
-// handle mqtt events from spotify
-// const SPOTIFY_STATE = {
-//     event: null,
-//     trackId: null,
-//     duration: null,
-//     position: null
-// }
+const p = fork(path.join(__dirname, 'child.js'), ['hello'], {
+    stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+});
 
-// client.on('connect', () => {
-//         client.subscribe([
-//             'tyler/spotify/event',
-//             'tyler/spotify/trackId', 
-//             'tyler/spotify/duration', 
-//             'tyler/spotify/position'
-//         ]);
-//     });
-
-//     client.on('message', (topic, message) => {
-//         switch(topic) {
-//             case 'tyler/spotify/event':
-//                 console.log(`Spotify Event:`, message.toString());
-//                 SPOTIFY_STATE.event = message.toString();
-//                 break;
-//             case 'tyler/spotify/trackId':
-//                 console.log('Spotify TrackId', message.toString());
-//                 SPOTIFY_STATE.trackId = message.toString();
-//                 break;
-//             case 'tyler/spotify/duration':
-//                 console.log('Spotify Duration', message.toString());
-//                 SPOTIFY_STATE.duration = message.toString();
-//                 break;
-//             case 'tyler/spotify/position':
-//                 console.log('Spotify Position', message.toString());
-//                 SPOTIFY_STATE.position = message.toString();
-//                 break;
-//             default:
-//                 break;
-//         }
-//         // send updated spotify state
-//         win.webContents.send('spotify-state', SPOTIFY_STATE);
-// });
-
-// const ipc = require('node-ipc');
-
-// ipc.config.id = 'main';
-// ipc.config.retry = 1500;
-
-// ipc.serve('/usr/local/bin/app.main', () => {
-//     ipc.server.on('SPOTIFY_DATA', (message, socket) => {
-//         console.log(message);
-//     });
-
-//     ipc.server.on('socket.disconnected', () => {
-//         ipc.log('client disconnected');
-//     });
-
-//     ipc.server.on('error', (err) => {
-//         console.log(err);
-//     })
-// });
-// ipc.server.start();
-
-// ipcMain.on('unique-message', (event, arg) => {
-//   console.log(arg);
-// });
+p.on('message', (m) => {
+    console.log(`main got it`, m);
+})
