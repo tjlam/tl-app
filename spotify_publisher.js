@@ -29,7 +29,7 @@ const spotifyData = {
     POSITION_MS
 };
 
-ipc.connectTo('main', () => {
+ipc.connectTo('main', '/tmp/app.main', () => {
   ipc.of.main.on('connect', () => {
     ipc.of.main.emit('SPOTIFY_DATA', spotifyData);
     process.exit();
