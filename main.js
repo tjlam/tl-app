@@ -36,10 +36,10 @@ app.on('window-all-closed', () => {
   }
 })
 
-const p = fork(path.join(__dirname, 'child.js'), ['hello'], {
+const p = fork(path.join(__dirname, 'ipcServer.js'), [], {
     stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
 });
 
 p.on('message', (m) => {
-    console.log(`main got it`, m);
-})
+    console.log(`Main.js recieved: `, m);
+});

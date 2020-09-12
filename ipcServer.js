@@ -1,5 +1,3 @@
-process.send('ahh ahh wyss');
-
 const ipc = require('node-ipc');
 
 ipc.config.id = 'main';
@@ -7,8 +5,12 @@ ipc.config.retry = 1500;
 
 ipc.serve(() => {
     ipc.server.on('SPOTIFY_DATA', (message, socket) => {
-        console.log(message);
-        process.send({hello: 'hello'});
+        console.log(`ipc server recieved: `, message);
+        process.send(
+            {
+                type: 'SPOTIFY_DATA',
+                ...message
+            });
     });
 
     ipc.server.on('socket.disconnected', () => {
