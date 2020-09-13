@@ -22,6 +22,7 @@ ipc.config.retry = 1500;
 ipc.config.maxRetries = 2;
 
 const args = process.argv.slice(2);
+console.log(`args`, args);
 const spotifyData = {
     PLAYER_EVENT: args[0],
     TRACK_ID: args[1],
