@@ -28,6 +28,7 @@ const spotifyData = {
   DURATION_MS,
   POSITION_MS
 };
+console.log(`spawn process`, process.env);
 console.log(`spotify data`, spotifyData);
 
 ipc.connectTo('main', '/tmp/app.main', () => {
