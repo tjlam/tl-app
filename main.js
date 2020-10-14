@@ -1,30 +1,34 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { fork } = require('child_process');
 const path = require('path');
+const { MSG_TYPES } = require('./app/constants');
 
 // setup window
+var win;
+
 function createWindow () {
     // Create the browser window.
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1056,
+        height: 257,
         webPreferences: {
         nodeIntegration: true
         }
     })
 
     // and load the index.html of the app.
-    win.loadFile('index.html')
+    win.loadFile('app/index.html')
 
     // Open the DevTools.
     win.webContents.openDevTools()
+    return win;
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-    createWindow();
+    win = createWindow();
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -41,5 +45,13 @@ const p = fork(path.join(__dirname, 'ipcServer.js'), [], {
 });
 
 p.on('message', (m) => {
-    console.log(`Main.js recieved: `, m);
+    switch(m.type) {
+      case MSG_TYPES.SPOTIFY:
+        console.log('Sending spotify data to renderer');
+        win.webContents.send(MSG_TYPES.SPOTIFY, m);
+        break;
+
+      default:
+        console.log(`Unknown msg type: `, m.type);
+    }
 });
