@@ -40,7 +40,7 @@ app.on('window-all-closed', () => {
   }
 })
 
-const p = fork(path.join(__dirname, 'ipcServer.js'), [], {
+const p = fork(path.join(__dirname, 'spotifyIPC/ipcServer.js'), [], {
     stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
 });
 
