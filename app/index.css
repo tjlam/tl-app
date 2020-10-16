@@ -1,4 +1,36 @@
-#spinny {
-    padding: 100px;
-    background-color: red;
+body {
+  margin: 0px;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+#screen-a {
+  width: 528px;
+  display: flex;
+}
+
+#screen-b {
+  width: 528px;
+  display: flex;
+}
+
+.dark-background {
+  background-color: #1d202f;
+  color: #c6dce4;
+}
+
+.dark-background .secondary {
+  background-color: #b5c6d2;
+}
+
+.light-background {
+  background-color: #c6dce4;
+  color: #1d202f;
+}
+
+.light-background .secondary {
+  background-color: #31354d;
 }
