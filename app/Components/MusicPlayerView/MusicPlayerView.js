@@ -93,6 +93,7 @@ class MusicPlayerView extends Component {
 
     if (playerEvent) {
       this.playerIsPaused = playerEvent === "paused";
+      console.log("state changed", this.playerIsPaused);
     }
 
     if (duration || position) {
