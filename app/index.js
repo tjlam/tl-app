@@ -14,7 +14,7 @@ function processSpotifyData(spotifyData) {
     trackId,
     playerEvent,
     duration: duration === "undefined" ? null : parseInt(duration),
-    position: position === "undefined" ? nulll : parseInt(position),
+    position: position === "undefined" ? null : parseInt(position),
   };
 }
 

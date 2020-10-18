@@ -69,7 +69,7 @@ class MusicPlayerView extends Component {
 
   msToTime(ms) {
     const stringTime = (num) => (num > 9 ? num : `0${num}`);
-    const seconds = (ms / 1000) % 60;
+    const seconds = Math.floor((ms / 1000) % 60);
     const mins = Math.floor(ms / 1000 / 60);
     return `${stringTime(mins)}:${stringTime(seconds)}`;
   }
