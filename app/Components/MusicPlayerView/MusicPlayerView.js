@@ -68,6 +68,7 @@ class MusicPlayerView extends Component {
       console.log(`incrment`, this.playerIsPaused);
       return;
     }
+    console.log(`actually incrementing`, this.position, this.playerIsPaused);
     this.updatePosition(this.position + 1000, this.duration);
     this.updateSongTime(this.position + 1000);
   }
