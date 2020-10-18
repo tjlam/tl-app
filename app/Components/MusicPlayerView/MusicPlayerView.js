@@ -11,7 +11,8 @@ class MusicPlayerView extends Component {
     this.songDurationText = "";
     this.songId = null;
     this.position = 0;
-    this.duration = 10000;
+    this.duration = Number.MAX_SAFE_INTEGER;
+    this.playerIsPaused = true;
   }
 
   async formatSongData(songId) {
@@ -63,6 +64,9 @@ class MusicPlayerView extends Component {
   }
 
   incrementPosition() {
+    if (this.playerIsPaused) {
+      return;
+    }
     this.updatePosition(this.position + 1000, this.duration);
     this.updateSongTime(this.position + 1000);
   }
@@ -86,10 +90,9 @@ class MusicPlayerView extends Component {
         }
       );
     }
+
     if (playerEvent) {
-      this.updateSongTime(position);
-      this.position = position;
-      this.duration = duration;
+      this.playerIsPaused = playerEvent === "paused";
     }
 
     if (duration || position) {

@@ -23,7 +23,12 @@ function updateCurrentSong(spotifyData) {
     spotifyData
   );
 
-  MusicPlayerComponent.render({ songId: trackId, duration, position });
+  MusicPlayerComponent.render({
+    songId: trackId,
+    playerEvent,
+    duration,
+    position,
+  });
 }
 
 ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
@@ -57,7 +62,7 @@ const {
 } = require("./Components/MusicPlayerView/MusicPlayerView");
 const MusicPlayerComponent = new MusicPlayerView();
 MusicPlayerComponent.mount(screenB);
-MusicPlayerComponent.render({ duration: 90000, position: 10000 });
+MusicPlayerComponent.render();
 
 // loop every second
 function loop() {
