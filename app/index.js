@@ -62,7 +62,7 @@ const {
 } = require("./Components/MusicPlayerView/MusicPlayerView");
 const MusicPlayerComponent = new MusicPlayerView();
 MusicPlayerComponent.mount(screenB);
-MusicPlayerComponent.render();
+MusicPlayerComponent.render({});
 
 // loop every second
 function loop() {

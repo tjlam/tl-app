@@ -65,10 +65,8 @@ class MusicPlayerView extends Component {
 
   incrementPosition() {
     if (this.playerIsPaused) {
-      console.log(`incrment`, this.playerIsPaused);
       return;
     }
-    console.log(`actually incrementing`, this.position, this.playerIsPaused);
     this.updatePosition(this.position + 1000, this.duration);
     this.updateSongTime(this.position + 1000);
   }
@@ -95,7 +93,6 @@ class MusicPlayerView extends Component {
 
     if (playerEvent) {
       this.playerIsPaused = playerEvent === "paused";
-      console.log("state changed", this.playerIsPaused);
     }
 
     if (duration || position) {
