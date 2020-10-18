@@ -23,8 +23,7 @@ function updateCurrentTrack(spotifyData) {
     spotifyData
   );
 
-  const trackText = `${playerEvent} - ${trackId} - ${duration} - ${position}`;
-  document.getElementById("track-info").innerText = trackText;
+  MusicPlayerComponent.render({ songId: trackId });
 }
 
 ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
@@ -58,7 +57,7 @@ const {
 } = require("./Components/MusicPlayerView/MusicPlayerView");
 const MusicPlayerComponent = new MusicPlayerView();
 MusicPlayerComponent.mount(screenB);
-MusicPlayerComponent.render({ songId: "3n3Ppam7vgaVa1iaRUc9Lp" });
+MusicPlayerComponent.render({});
 
 // loop every second
 function loop() {

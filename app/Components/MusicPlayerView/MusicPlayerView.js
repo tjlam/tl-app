@@ -35,9 +35,10 @@ class MusicPlayerView extends Component {
   }
 
   render(props) {
-    if (this.songId !== props.songId) {
-      this.songId = props.songId;
-      this.formatSongData(props.songId).then(
+    const { songId } = props;
+    if (songId && this.songId !== songId) {
+      this.songId = songId;
+      this.formatSongData(songId).then(
         ({ name, artistNames, albumName, imageUrl }) => {
           this.updateSongLabel(name, artistNames);
           this.updateAlbumArt(imageUrl);
