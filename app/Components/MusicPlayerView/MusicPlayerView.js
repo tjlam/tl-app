@@ -10,6 +10,8 @@ class MusicPlayerView extends Component {
     this.currentProgress = null;
     this.songDurationText = "";
     this.songId = null;
+    this.position = 0;
+    this.duration = 10000;
   }
 
   async formatSongData(songId) {
@@ -24,8 +26,8 @@ class MusicPlayerView extends Component {
   updateSongLabel(songText, artistNames) {
     const artistText = artistNames.join(",");
     const songDescription = `${songText} - ${artistText}`;
-    const SongLabel = this.template.querySelectorAll("#song-label");
-    SongLabel[0].innerHTML = songDescription;
+    const SongLabel = this.template.querySelectorAll("#song-label")[0];
+    SongLabel.innerHTML = songDescription;
     this.currentSongText = songDescription;
   }
 
@@ -34,16 +36,66 @@ class MusicPlayerView extends Component {
     albumArt.style.backgroundImage = `url('${imageUrl}')`;
   }
 
+  updateSongTime(position) {
+    const currentTimeText = this.msToTime(position);
+    const currentTime = this.template.querySelectorAll("#time-label")[0];
+    currentTime.innerHTML = currentTimeText;
+  }
+
+  updateSongDuration(duration) {
+    this.duration = duration;
+    const durationText = this.msToTime(duration);
+    const durationTime = this.template.querySelectorAll("#duration-label")[0];
+    durationTime.innerHTML = durationText;
+  }
+
+  updatePosition(position, duration) {
+    if (position > duration) {
+      return;
+    }
+    this.position = position;
+    const MAX_WIDTH = 391;
+    const percentageComplete = position / duration;
+    const progressBar = this.template.querySelectorAll(
+      "#progress-bar-position"
+    )[0];
+    progressBar.style.width = `${percentageComplete * MAX_WIDTH}px`;
+  }
+
+  incrementPosition() {
+    this.updatePosition(this.position + 1000, this.duration);
+    this.updateSongTime(this.position + 1000);
+  }
+
+  msToTime(ms) {
+    const stringTime = (num) => (num > 9 ? num : `0${num}`);
+    const seconds = (ms / 1000) % 60;
+    const mins = Math.floor(ms / 1000 / 60);
+    return `${stringTime(mins)}:${stringTime(seconds)}`;
+  }
+
   render(props) {
-    const { songId } = props;
+    const { songId, playerEvent, position, duration } = props;
     if (songId && this.songId !== songId) {
       this.songId = songId;
       this.formatSongData(songId).then(
         ({ name, artistNames, albumName, imageUrl }) => {
           this.updateSongLabel(name, artistNames);
           this.updateAlbumArt(imageUrl);
+          this.updateSongDuration(duration);
         }
       );
+    }
+    if (playerEvent) {
+      this.updateSongTime(position);
+      this.position = position;
+      this.duration = duration;
+    }
+
+    if (duration || position) {
+      this.updateSongDuration(duration);
+      this.updateSongTime(position);
+      this.updatePosition(position, duration);
     }
   }
 }

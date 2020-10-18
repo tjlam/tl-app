@@ -13,22 +13,22 @@ function processSpotifyData(spotifyData) {
   return {
     trackId,
     playerEvent,
-    duration,
-    position,
+    duration: duration === "undefined" ? null : parseInt(duration),
+    position: position === "undefined" ? nulll : parseInt(position),
   };
 }
 
-function updateCurrentTrack(spotifyData) {
+function updateCurrentSong(spotifyData) {
   const { trackId, playerEvent, duration, position } = processSpotifyData(
     spotifyData
   );
 
-  MusicPlayerComponent.render({ songId: trackId });
+  MusicPlayerComponent.render({ songId: trackId, duration, position });
 }
 
 ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
   console.log(`Renderer received: `, data);
-  updateCurrentTrack(data);
+  updateCurrentSong(data);
 });
 
 function toggleDarkMode() {
@@ -57,11 +57,12 @@ const {
 } = require("./Components/MusicPlayerView/MusicPlayerView");
 const MusicPlayerComponent = new MusicPlayerView();
 MusicPlayerComponent.mount(screenB);
-MusicPlayerComponent.render({});
+MusicPlayerComponent.render({ duration: 90000, position: 10000 });
 
 // loop every second
 function loop() {
   TimeComponent.render();
+  MusicPlayerComponent.incrementPosition();
   var t = setTimeout(loop, 1000);
 }
 

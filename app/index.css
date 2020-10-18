@@ -88,3 +88,38 @@ body {
   height: 122px;
   background-size: contain;
 }
+
+#progress-bar-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+#progress-bar-duration {
+  height: 5px;
+  width: 391px;
+  background-color: #1d202f;
+  border-radius: 5px;
+}
+
+#progress-bar-position {
+  height: 5px;
+  background-color: #c6dce4;
+  border: 1px solid #1d202f;
+  border-radius: 5px;
+}
+
+#time-label {
+  font-family: "Oxanium";
+  font-size: 12px;
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+#duration-label {
+  font-family: "Oxanium";
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 10px;
+}
