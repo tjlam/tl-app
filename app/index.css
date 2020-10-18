@@ -9,28 +9,82 @@ body {
 
 #screen-a {
   width: 528px;
+  height: 257px;
   display: flex;
 }
 
 #screen-b {
   width: 528px;
+  height: 257px;
   display: flex;
 }
 
-.dark-background {
+.dark-mode {
   background-color: #1d202f;
   color: #c6dce4;
 }
 
-.dark-background .secondary {
-  background-color: #b5c6d2;
+.dark-mode .secondary {
+  background-color: #31354d;
 }
 
-.light-background {
+.light-mode {
   background-color: #c6dce4;
   color: #1d202f;
 }
 
-.light-background .secondary {
-  background-color: #31354d;
+.light-mode .secondary {
+  background-color: #b5c6d2;
+}
+
+#date-time-view {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  margin: auto;
+}
+
+#time-label {
+  font-family: "Oxanium";
+  font-size: 64px;
+  font-weight: 600;
+  display: flex;
+}
+
+#date-label {
+  font-family: "Oxanium";
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+}
+
+#music-player-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+#display-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 26px;
+}
+
+#player-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 20px;
+}
+
+#song-label {
+  font-family: "Oxanium";
+  font-size: 18px;
+  font-weight: 500;
+  align-self: center;
+}
+
+#album-art-wrapper {
+  width: 122px;
+  height: 122px;
+  background-size: contain;
 }

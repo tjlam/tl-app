@@ -3,12 +3,12 @@ const TEMPLATE_FILE_NAME =
   "./app/Components/DateTimeView/date-time-template.html";
 
 class DateTime extends Component {
-  constructor({ templateFileName, initialProps = {}, parentElement = null }) {
+  constructor(initialProps) {
     super({
       templateFileName: TEMPLATE_FILE_NAME,
       initialProps,
-      parentElement,
     });
+    this.currentDate = null;
   }
 
   updateTimeLabel(timeText) {
@@ -19,6 +19,7 @@ class DateTime extends Component {
   updateDateLabel(dateText) {
     const DateLabel = this.template.querySelectorAll("#date-label");
     DateLabel[0].innerHTML = dateText;
+    this.currentDate = dateText;
   }
 
   getCurrentTime() {
@@ -64,8 +65,10 @@ class DateTime extends Component {
   render() {
     const timeText = this.formatTimeString(this.getCurrentTime());
     const dateText = this.formatDateString(this.getCurrentDate());
+    if (this.currentDate !== dateText) {
+      this.updateDateLabel(dateText);
+    }
     this.updateTimeLabel(timeText);
-    this.updateDateLabel(dateText);
   }
 }
 

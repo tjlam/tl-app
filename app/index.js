@@ -1,5 +1,6 @@
 const { ipcRenderer } = require("electron");
 const { WEATHER_API_KEY, MSG_TYPES } = require("./constants");
+let darkMode = false;
 
 function processSpotifyData(spotifyData) {
   const {
@@ -31,13 +32,33 @@ ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
   updateCurrentTrack(data);
 });
 
+function toggleDarkMode() {
+  darkMode = !darkMode;
+  let modeClassName = darkMode ? "dark-mode" : "light-mode";
+  let removeClassName = darkMode ? "light-mode" : "dark-mode";
+
+  const body = document.getElementsByTagName("body")[0];
+  body.classList.remove(removeClassName);
+  body.classList.add(modeClassName);
+}
+
 // try some of this new shit out
 const screenA = document.getElementById("screen-a");
+const screenB = document.getElementById("screen-b");
+
+toggleDarkMode();
 
 const { DateTimeView } = require("./Components/DateTimeView/DateTimeView");
-const TimeComponent = new DateTimeView({ parentElement: screenA });
-TimeComponent.mount();
+const TimeComponent = new DateTimeView();
+TimeComponent.mount(screenA);
 TimeComponent.render();
+
+const {
+  MusicPlayerView,
+} = require("./Components/MusicPlayerView/MusicPlayerView");
+const MusicPlayerComponent = new MusicPlayerView();
+MusicPlayerComponent.mount(screenB);
+MusicPlayerComponent.render({ songId: "3n3Ppam7vgaVa1iaRUc9Lp" });
 
 // loop every second
 function loop() {

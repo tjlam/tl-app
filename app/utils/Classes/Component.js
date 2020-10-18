@@ -1,9 +1,8 @@
 const fs = require("fs");
 
 class Component {
-  constructor({ templateFileName, initialProps = {}, parentElement = null }) {
+  constructor({ templateFileName, initialProps = {} }) {
     this.props = initialProps;
-    this.parentElement = parentElement;
 
     const templateString = templateFileName
       ? fs.readFileSync(templateFileName, "utf8")
@@ -17,19 +16,21 @@ class Component {
       return null;
     }
 
-    const doc = new DOMParser().parseFromString(templateString, "text/xml");
-    return doc ? doc.firstChild : null;
+    const doc = new DOMParser().parseFromString(templateString, "text/html");
+    const htmlContents = doc.firstElementChild.getElementsByTagName("body")[0]
+      .children[0];
+    return doc ? htmlContents : null;
   }
 
-  mount() {
-    if (!this.parentElement || !this.template) {
+  mount(parentElement) {
+    if (!parentElement || !this.template) {
       return;
     }
-    this.parentElement.appendChild(this.template);
+    parentElement.appendChild(this.template);
   }
 
-  dismount() {
-    // do someshit here
+  dismount(parentElement) {
+    parentElement.removeChild(parentElement.childNodes[0]);
     return;
   }
 
