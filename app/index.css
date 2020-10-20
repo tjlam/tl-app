@@ -105,12 +105,14 @@ body {
 
 #progress-bar-position {
   height: 5px;
+  width: 391px;
   background-color: #c6dce4;
   border: 1px solid #1d202f;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
-#time-label {
+#position-label {
   font-family: "Oxanium";
   font-size: 12px;
   font-weight: 500;

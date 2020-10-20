@@ -50,8 +50,6 @@ function toggleDarkMode() {
 const screenA = document.getElementById("screen-a");
 const screenB = document.getElementById("screen-b");
 
-toggleDarkMode();
-
 const { DateTimeView } = require("./Components/DateTimeView/DateTimeView");
 const TimeComponent = new DateTimeView();
 TimeComponent.mount(screenA);

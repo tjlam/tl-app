@@ -29,12 +29,10 @@ class DateTime extends Component {
 
     let hour = dateObj.getHours();
     let minutes = dateObj.getMinutes();
-    let seconds = dateObj.getSeconds();
 
     return {
       hour,
       minutes,
-      seconds,
     };
   }
 
@@ -44,22 +42,30 @@ class DateTime extends Component {
     let dateObj = new Date(ts);
 
     let day = dateObj.getDate();
+    let dayOfWeek = dateObj.getDay();
     let month = dateObj.getMonth() + 1;
     let year = dateObj.getFullYear();
 
     return {
       day,
+      dayOfWeek,
       month,
       year,
     };
   }
 
-  formatDateString({ day, month, year }) {
-    return `${day}, ${month} ${year}`;
+  formatDateString({ day, dayOfWeek, month, year }) {
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return `${DAYS[dayOfWeek]}. ${MONTHS[month - 1]}. ${day}, ${year}`;
   }
 
-  formatTimeString({ hour, minutes, seconds }) {
-    return `${hour}:${minutes}:${seconds}`;
+  formatTimeString({ hour, minutes }) {
+    if (hour === 0) { hour = 12 };
+    var regularHour = hour > 12 ? hour - 12 : hour;
+    const prependZero = (time) => time > 9 ? time : `0${time}`;
+    const AMorPM = hour > 12 ? 'PM' : 'AM';
+    return `${prependZero(regularHour)}:${prependZero(minutes)} ${AMorPM}`;
   }
 
   render() {

@@ -25,7 +25,7 @@ class MusicPlayerView extends Component {
   }
 
   updateSongLabel(songText, artistNames) {
-    const artistText = artistNames.join(",");
+    const artistText = artistNames.join(", ");
     const songDescription = `${songText} - ${artistText}`;
     const SongLabel = this.template.querySelectorAll("#song-label")[0];
     SongLabel.innerHTML = songDescription;
@@ -39,7 +39,7 @@ class MusicPlayerView extends Component {
 
   updateSongTime(position) {
     const currentTimeText = this.msToTime(position);
-    const currentTime = this.template.querySelectorAll("#time-label")[0];
+    const currentTime = this.template.querySelectorAll("#position-label")[0];
     currentTime.innerHTML = currentTimeText;
   }
 
@@ -57,10 +57,11 @@ class MusicPlayerView extends Component {
     this.position = position;
     const MAX_WIDTH = 391;
     const percentageComplete = position / duration;
-    const progressBar = this.template.querySelectorAll(
-      "#progress-bar-position"
-    )[0];
-    progressBar.style.width = `${percentageComplete * MAX_WIDTH}px`;
+    anime({
+      targets: '#progress-bar-position',
+      width: `${percentageComplete * MAX_WIDTH}px`,
+      easing: 'easeInOutSine',
+    })
   }
 
   incrementPosition() {
@@ -86,7 +87,6 @@ class MusicPlayerView extends Component {
         ({ name, artistNames, albumName, imageUrl }) => {
           this.updateSongLabel(name, artistNames);
           this.updateAlbumArt(imageUrl);
-          this.updateSongDuration(duration);
         }
       );
     }
@@ -95,7 +95,7 @@ class MusicPlayerView extends Component {
       this.playerIsPaused = playerEvent === "paused";
     }
 
-    if (duration || position) {
+    if (duration !== null && position !== null) {
       this.updateSongDuration(duration);
       this.updateSongTime(position);
       this.updatePosition(position, duration);
