@@ -27,7 +27,10 @@ class Component {
       return;
     }
     parentElement.appendChild(this.template);
+    this.onMount();
   }
+
+  onMount() {}
 
   dismount(parentElement) {
     parentElement.removeChild(parentElement.childNodes[0]);

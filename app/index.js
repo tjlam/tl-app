@@ -1,6 +1,10 @@
 const { ipcRenderer } = require("electron");
 const { WEATHER_API_KEY, MSG_TYPES } = require("./constants");
 let darkMode = false;
+const {
+  MusicPlayerView,
+} = require("./Components/MusicPlayerView/MusicPlayerView");
+const { WeatherView } = require("./Components/WeatherView/WeatherView");
 
 function processSpotifyData(spotifyData) {
   const {
@@ -46,6 +50,24 @@ function toggleDarkMode() {
   body.classList.add(modeClassName);
 }
 
+function mountMusicPlayer() {
+  const MusicPlayerComponent = new MusicPlayerView();
+  MusicPlayerComponent.mount(screenB);
+  MusicPlayerComponent.render({});
+}
+
+function getLatLong() {
+  var location = null;
+  navigator.geolocation.getCurrentPosition((location) => {
+    console.log(`asdf`, location);
+    location = {
+      lat: location.coords.latitude,
+      long: location.coords.longitude,
+    };
+  });
+  return location;
+}
+
 // try some of this new shit out
 const screenA = document.getElementById("screen-a");
 const screenB = document.getElementById("screen-b");
@@ -55,17 +77,15 @@ const TimeComponent = new DateTimeView();
 TimeComponent.mount(screenA);
 TimeComponent.render();
 
-const {
-  MusicPlayerView,
-} = require("./Components/MusicPlayerView/MusicPlayerView");
-const MusicPlayerComponent = new MusicPlayerView();
-MusicPlayerComponent.mount(screenB);
-MusicPlayerComponent.render({});
+const WeatherViewComponent = new WeatherView({ window });
+WeatherViewComponent.mount(screenB);
+WeatherViewComponent.render();
 
 // loop every second
 function loop() {
   TimeComponent.render();
-  MusicPlayerComponent.incrementPosition();
+  WeatherViewComponent.render();
+  // MusicPlayerComponent.incrementPosition();
   var t = setTimeout(loop, 1000);
 }
 
