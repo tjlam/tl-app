@@ -40,6 +40,10 @@ ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
   updateCurrentSong(data);
 });
 
+ipcRenderer.on(MSG_TYPES.CONTROL, (event, data) => {
+  console.log(`Renderer received: `, data);
+});
+
 function toggleDarkMode() {
   darkMode = !darkMode;
   let modeClassName = darkMode ? "dark-mode" : "light-mode";

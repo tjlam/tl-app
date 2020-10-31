@@ -45,6 +45,10 @@ const p = fork(path.join(__dirname, "spotifyIPC/ipcServer.js"), [], {
   stdio: ["pipe", "pipe", "pipe", "ipc"],
 });
 
+const rotaryProcess = fork(path.join(__dirname, "rotary.js"), [], {
+  stdio: ["pipe", "pipe", "pipe", "ipc"],
+});
+
 p.on("message", (m) => {
   switch (m.type) {
     case MSG_TYPES.SPOTIFY:
@@ -56,3 +60,10 @@ p.on("message", (m) => {
       console.log(`Unknown msg type: `, m.type);
   }
 });
+
+rotaryProcess.on("message", (m) => {
+  console.log('Control action:', m);
+  win.webContents.send(MSG_TYPES.CONTROL, m);
+});
+
+console.log('in main');
