@@ -125,3 +125,11 @@ body {
   font-weight: 500;
   margin-left: 10px;
 }
+
+.forecast-item.selected {
+  background-color: #b5c6d2;
+}
+
+.selected {
+  background-color: red;
+}

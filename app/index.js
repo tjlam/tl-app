@@ -5,7 +5,66 @@ const {
   MusicPlayerView,
 } = require("./Components/MusicPlayerView/MusicPlayerView");
 const { WeatherView } = require("./Components/WeatherView/WeatherView");
+const { DateTimeView } = require("./Components/DateTimeView/DateTimeView");
+const {
+  RotaryController: RotaryControllerClass,
+} = require("./utils/Classes/RotaryController");
 
+// All components
+const MusicPlayerComponent = new MusicPlayerView();
+const TimeComponent = new DateTimeView();
+const WeatherViewComponent = new WeatherView({ window });
+
+// mounting components
+const screenA = document.getElementById("screen-a");
+const screenB = document.getElementById("screen-b");
+
+TimeComponent.mount(screenA);
+TimeComponent.render();
+
+WeatherViewComponent.mount(screenB);
+WeatherViewComponent.render();
+
+const RotaryController = new RotaryControllerClass(document);
+
+document.onkeydown = (e) => {
+  if (e.keyCode === 75) {
+    RotaryController.handleMove(-2);
+  }
+  if (e.keyCode === 76) {
+    RotaryController.handleMove(2);
+  }
+  if (e.keyCode === 32) {
+    RotaryController.handleClick();
+  }
+};
+
+// loop every second
+function loop() {
+  TimeComponent.render();
+  // MusicPlayerComponent.incrementPosition();
+  var t = setTimeout(loop, 1000);
+}
+
+loop();
+
+// event handling
+ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
+  console.log(`Renderer received: `, data);
+  updateCurrentSong(data);
+});
+
+ipcRenderer.on(MSG_TYPES.CONTROL, (event, data) => {
+  console.log(`Renderer received: `, data);
+  if (event.type === "left") {
+    RotaryController.handleMove(-1 * event.amount);
+  }
+  if (event.type === "right") {
+    RotaryController.handleMove(1 * event.amount);
+  }
+});
+
+// helpers
 function processSpotifyData(spotifyData) {
   const {
     TRACK_ID: trackId,
@@ -22,28 +81,6 @@ function processSpotifyData(spotifyData) {
   };
 }
 
-function updateCurrentSong(spotifyData) {
-  const { trackId, playerEvent, duration, position } = processSpotifyData(
-    spotifyData
-  );
-
-  MusicPlayerComponent.render({
-    songId: trackId,
-    playerEvent,
-    duration,
-    position,
-  });
-}
-
-ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
-  console.log(`Renderer received: `, data);
-  updateCurrentSong(data);
-});
-
-ipcRenderer.on(MSG_TYPES.CONTROL, (event, data) => {
-  console.log(`Renderer received: `, data);
-});
-
 function toggleDarkMode() {
   darkMode = !darkMode;
   let modeClassName = darkMode ? "dark-mode" : "light-mode";
@@ -52,12 +89,6 @@ function toggleDarkMode() {
   const body = document.getElementsByTagName("body")[0];
   body.classList.remove(removeClassName);
   body.classList.add(modeClassName);
-}
-
-function mountMusicPlayer() {
-  const MusicPlayerComponent = new MusicPlayerView();
-  MusicPlayerComponent.mount(screenB);
-  MusicPlayerComponent.render({});
 }
 
 function getLatLong() {
@@ -72,25 +103,21 @@ function getLatLong() {
   return location;
 }
 
-// try some of this new shit out
-const screenA = document.getElementById("screen-a");
-const screenB = document.getElementById("screen-b");
-
-const { DateTimeView } = require("./Components/DateTimeView/DateTimeView");
-const TimeComponent = new DateTimeView();
-TimeComponent.mount(screenA);
-TimeComponent.render();
-
-const WeatherViewComponent = new WeatherView({ window });
-WeatherViewComponent.mount(screenB);
-WeatherViewComponent.render();
-
-// loop every second
-function loop() {
-  TimeComponent.render();
-  WeatherViewComponent.render();
-  // MusicPlayerComponent.incrementPosition();
-  var t = setTimeout(loop, 1000);
+function mountMusicPlayer() {
+  const MusicPlayerComponent = new MusicPlayerView();
+  MusicPlayerComponent.mount(screenB);
+  MusicPlayerComponent.render({});
 }
 
-loop();
+function updateCurrentSong(spotifyData) {
+  const { trackId, playerEvent, duration, position } = processSpotifyData(
+    spotifyData
+  );
+
+  MusicPlayerComponent.render({
+    songId: trackId,
+    playerEvent,
+    duration,
+    position,
+  });
+}

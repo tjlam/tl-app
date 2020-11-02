@@ -1,7 +1,8 @@
 const { Component } = require("../../utils/Classes/Component");
 const FILE_TEMPLATE = "./app/Components/WeatherView/weather-view-template.html";
 const { getWeatherData } = require("../../utils/actions/weatherActions");
-const { cleanWeatherData } = require("./utils");
+const { cleanWeatherData, tempToText } = require("./utils");
+const { ForecastView } = require("./ForecastView");
 
 class WeatherView extends Component {
   constructor(initialProps) {
@@ -10,11 +11,14 @@ class WeatherView extends Component {
     const { window } = initialProps;
     this.window = window;
     this.weatherData = {};
+    this.forecastView = new ForecastView({});
   }
 
   async onMount() {
     // retrieve weather info
-    await this.getWeatherData();
+    const forecastDiv = this.template.querySelectorAll("#forecast-wrapper")[0];
+    this.forecastView.mount(forecastDiv);
+    await this.updateWeatherData();
   }
 
   getCurrentTempText() {
@@ -22,16 +26,15 @@ class WeatherView extends Component {
       return null;
     }
     const { temp } = this.weatherData.current;
-    return `${Math.round(temp)}˚C`;
+    return tempToText(temp);
   }
 
   getCurrentDescriptionText() {
     if (!this.weatherData.current) {
       return null;
     }
-    console.log(this.weatherData);
-    const { description } = this.weatherData.current;
-    return description;
+    const { description, feelsLike } = this.weatherData.current;
+    return `${description}, feels like ${tempToText(feelsLike)}`;
   }
 
   writeWeatherData() {
@@ -53,26 +56,26 @@ class WeatherView extends Component {
     const lastUpdatedTimeString = this.window.localStorage.getItem(
       "lastUpdated"
     );
+    const savedWeatherData = this.readWeatherData();
+
+    if (!savedWeatherData || !lastUpdatedTimeString) {
+      return false;
+    }
+
+    // check if weather was updated in the last 30 mins
     const lastUpdatedTimestamp = new Date(lastUpdatedTimeString);
     const currentTimestamp = new Date();
     const diff = Math.floor(
       (currentTimestamp - lastUpdatedTimestamp) / 1000 / 60
     );
-    console.log(diff);
     return diff < 30;
   }
 
-  async getWeatherData() {
-    const savedWeatherData = this.readWeatherData();
-
-    if (!this.hasUpdatedWeather() || !savedWeatherData) {
-      const weatherData = await getWeatherData();
-      const cleanedData = cleanWeatherData(weatherData);
-      this.weatherData = cleanedData;
-      this.writeWeatherData();
-      return;
-    }
-    this.weatherData = savedWeatherData;
+  async updateWeatherData() {
+    const weatherData = await getWeatherData();
+    const cleanedData = cleanWeatherData(weatherData);
+    this.weatherData = cleanedData;
+    this.writeWeatherData();
   }
 
   updateCurrentTemp() {
@@ -87,9 +90,22 @@ class WeatherView extends Component {
     currentDescriptionDiv.innerHTML = this.getCurrentDescriptionText();
   }
 
+  updateForecast() {
+    const { hourly } = this.weatherData;
+    if (hourly) {
+      this.forecastView.render({ forecastData: hourly });
+    }
+  }
+
   render() {
+    if (!this.hasUpdatedWeather()) {
+      this.updateWeatherData();
+    }
+    this.updateForecast();
     this.updateCurrentTemp();
     this.updateCurrentDescription();
+
+    var t = setTimeout(this.render.bind(this), 1000);
   }
 }
 
