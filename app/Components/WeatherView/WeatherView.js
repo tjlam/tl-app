@@ -78,22 +78,27 @@ class WeatherView extends Component {
     this.writeWeatherData();
   }
 
-  updateCurrentTemp() {
+  updateCurrentTemp(temp) {
     const currentTempDiv = this.template.querySelectorAll("#current-temp")[0];
-    currentTempDiv.innerHTML = this.getCurrentTempText();
+    currentTempDiv.innerHTML = temp || this.getCurrentTempText();
   }
 
-  updateCurrentDescription() {
+  updateCurrentDescription(description) {
     const currentDescriptionDiv = this.template.querySelectorAll(
       "#current-description"
     )[0];
-    currentDescriptionDiv.innerHTML = this.getCurrentDescriptionText();
+    currentDescriptionDiv.innerHTML = description || this.getCurrentDescriptionText();
   }
 
   updateForecast() {
     const { hourly } = this.weatherData;
     if (hourly) {
       this.forecastView.render({ forecastData: hourly });
+    }
+  }
+
+  handleForecastItemClick(forecastIndex, mode) {
+    if (mode === 'hourly') {
     }
   }
 
