@@ -56,11 +56,11 @@ ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
 
 ipcRenderer.on(MSG_TYPES.CONTROL, (event, data) => {
   console.log(`Renderer received: `, data);
-  if (event.type === "left") {
-    RotaryController.handleMove(-1 * event.amount);
+  if (data.action === "left" || data.action === 'right') {
+    RotaryController.handleMove(data.amount);
   }
-  if (event.type === "right") {
-    RotaryController.handleMove(1 * event.amount);
+  if (data.action === "press") {
+    RotaryController.handleClick();
   }
 });
 
