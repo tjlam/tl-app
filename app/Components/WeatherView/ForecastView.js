@@ -1,14 +1,20 @@
-const { Component } = require("../../utils/Classes/Component");
-const { tempToText, indexToDay, indexToHour } = require("./utils");
-const FILE_TEMPLATE = "./app/Components/WeatherView/forecast-template.html";
-const HOUR_MODE = "hourly";
-const DAY_MODE = "daily";
+const { Component } = require('../../utils/Classes/Component');
+const { tempToText, indexToDay, indexToHour } = require('./utils');
+const FILE_TEMPLATE = './app/Components/WeatherView/forecast-template.html';
+const HOUR_MODE = 'hourly';
+const DAY_MODE = 'daily';
 
 class ForecastView extends Component {
-  constructor({ forecastData }) {
-    super({ templateFileName: FILE_TEMPLATE });
+  constructor({ forecastData, onClick, document }) {
+    super({ templateFileName: FILE_TEMPLATE, initialProps: { document } });
     this.mode = HOUR_MODE;
     this.forecastData = forecastData;
+    this.document = document;
+  }
+
+  onClick() {
+    debugger;
+    this.emitter.emit('event');
   }
 
   updateForecastItems(forecast) {
@@ -29,15 +35,17 @@ class ForecastView extends Component {
     if (!forecastItemDiv) {
       return;
     }
+
+    this.document.getElementById(forecastItemDiv.id).onClick = this.onClick;
     // update temp
-    const tempDiv = forecastItemDiv.querySelectorAll(".temp")[0];
+    const tempDiv = forecastItemDiv.querySelectorAll('.temp')[0];
     tempDiv.innerHTML = tempToText(temp);
     // update time
-    const timeDiv = forecastItemDiv.querySelectorAll(".time")[0];
+    const timeDiv = forecastItemDiv.querySelectorAll('.time')[0];
     timeDiv.innerHTML =
       this.mode === HOUR_MODE ? indexToHour(timeId) : indexToDay(timeId);
     // update icon
-    const iconDiv = forecastItemDiv.querySelectorAll(".icon")[0];
+    const iconDiv = forecastItemDiv.querySelectorAll('.icon')[0];
     iconDiv.innerHTML = iconId;
   }
 

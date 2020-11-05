@@ -1,9 +1,9 @@
 class RotaryController {
   constructor(document) {
     this.document = document;
-    const allSelectable = document.querySelectorAll("#screen-a, #screen-b");
+    const allSelectable = document.querySelectorAll('#screen-a, #screen-b');
     this.selectableTree = {
-      val: "root",
+      val: 'root',
       children: this.setSelectableTree(allSelectable, {}),
     };
     this.address = [];
@@ -16,7 +16,7 @@ class RotaryController {
         continue;
       }
       visited[el.id] = true;
-      const children = el.querySelectorAll(".selectable");
+      const children = el.querySelectorAll('.selectable');
       if (children.length) {
         nodes.push({
           val: el,
@@ -46,7 +46,7 @@ class RotaryController {
 
   getNode(root, address) {
     if (!root) {
-      console.log("no root");
+      console.log('no root');
       return;
     }
 
@@ -59,6 +59,15 @@ class RotaryController {
     return this.getNode(newRoot, newAddress);
   }
 
+  getCurrentHTMLElement() {
+    const node = this.getNode(this.selectableTree, this.address);
+    if (!node) {
+      return null;
+    }
+
+    return this.document.getElementById(node.val.id);
+  }
+
   handleSelect(address, direction) {
     let node = this.getNode(this.selectableTree, address);
     if (!node) {
@@ -69,30 +78,31 @@ class RotaryController {
       }
       console.log(`error moving ${direction}`);
     }
-    this.document.getElementById(node.val.id).classList.add("selected");
-    console.log("selecting", this.document.getElementById(node.val.id));
+    this.document.getElementById(node.val.id).classList.add('selected');
+    console.log('selecting', this.document.getElementById(node.val.id));
   }
 
   handleUnSelect(address) {
     const node = this.getNode(this.selectableTree, address);
     if (!node) {
       // handle here
-      console.log("error unselecting");
+      console.log('error unselecting');
       return;
     }
 
-    this.document.getElementById(node.val.id).classList.remove("selected");
+    this.document.getElementById(node.val.id).classList.remove('selected');
   }
 
-  handleClick() {
+  handleClick(callBack) {
     const node = this.getNode(this.selectableTree, this.address);
     if (node.children) {
       this.handleUnSelect(this.address);
       this.digAddress();
       this.handleSelect(this.address, 0);
-    } else {
+    } else if (callBack) {
       // call on click function
-      console.log("nothing to do");
+      console.log('something to do');
+      callBack();
     }
   }
 

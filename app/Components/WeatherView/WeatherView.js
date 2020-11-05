@@ -1,60 +1,63 @@
-const { Component } = require("../../utils/Classes/Component");
-const FILE_TEMPLATE = "./app/Components/WeatherView/weather-view-template.html";
-const { getWeatherData } = require("../../utils/actions/weatherActions");
-const { cleanWeatherData, tempToText } = require("./utils");
-const { ForecastView } = require("./ForecastView");
-
+const { Component } = require('../../utils/Classes/Component');
+const FILE_TEMPLATE = './app/Components/WeatherView/weather-view-template.html';
+const { getWeatherData } = require('../../utils/actions/weatherActions');
+const { cleanWeatherData, tempToText } = require('./utils');
+const { ForecastView } = require('./ForecastView');
 class WeatherView extends Component {
   constructor(initialProps) {
     super({ templateFileName: FILE_TEMPLATE, initialProps });
 
     const { window } = initialProps;
+    this.document = initialProps.document;
+    this.props = initialProps;
     this.window = window;
     this.weatherData = {};
-    this.forecastView = new ForecastView({});
+    this.forecastView = new ForecastView({
+      document,
+    });
   }
 
   async onMount() {
     // retrieve weather info
-    const forecastDiv = this.template.querySelectorAll("#forecast-wrapper")[0];
+    const forecastDiv = this.template.querySelectorAll('#forecast-wrapper')[0];
     this.forecastView.mount(forecastDiv);
     await this.updateWeatherData();
   }
 
-  getCurrentTempText() {
-    if (!this.weatherData.current) {
+  getTempText(weatherData) {
+    if (!weatherData && !this.weatherData.current) {
       return null;
     }
-    const { temp } = this.weatherData.current;
+    const { temp } = weatherData || this.weatherData.current;
     return tempToText(temp);
   }
 
-  getCurrentDescriptionText() {
-    if (!this.weatherData.current) {
+  getDescriptionText(weatherData) {
+    if (!this.weatherData.current || !weatherData) {
       return null;
     }
-    const { description, feelsLike } = this.weatherData.current;
+    const { description, feelsLike } = weatherData || this.weatherData.current;
     return `${description}, feels like ${tempToText(feelsLike)}`;
   }
 
   writeWeatherData() {
     this.window.localStorage.setItem(
-      "weatherData",
+      'weatherData',
       JSON.stringify(this.weatherData)
     );
     const date = new Date();
     const lastUpdated = date.toISOString();
-    this.window.localStorage.setItem("lastUpdated", lastUpdated);
+    this.window.localStorage.setItem('lastUpdated', lastUpdated);
   }
 
   readWeatherData() {
-    const weatherDataString = this.window.localStorage.getItem("weatherData");
+    const weatherDataString = this.window.localStorage.getItem('weatherData');
     return JSON.parse(weatherDataString);
   }
 
   hasUpdatedWeather() {
     const lastUpdatedTimeString = this.window.localStorage.getItem(
-      "lastUpdated"
+      'lastUpdated'
     );
     const savedWeatherData = this.readWeatherData();
 
@@ -73,21 +76,23 @@ class WeatherView extends Component {
 
   async updateWeatherData() {
     const weatherData = await getWeatherData();
+    console.log(weatherData);
     const cleanedData = cleanWeatherData(weatherData);
     this.weatherData = cleanedData;
     this.writeWeatherData();
+    console.log(cleanedData);
   }
 
   updateCurrentTemp(temp) {
-    const currentTempDiv = this.template.querySelectorAll("#current-temp")[0];
-    currentTempDiv.innerHTML = temp || this.getCurrentTempText();
+    const currentTempDiv = this.template.querySelectorAll('#current-temp')[0];
+    currentTempDiv.innerHTML = temp || this.getTempText();
   }
 
   updateCurrentDescription(description) {
     const currentDescriptionDiv = this.template.querySelectorAll(
-      "#current-description"
+      '#current-description'
     )[0];
-    currentDescriptionDiv.innerHTML = description || this.getCurrentDescriptionText();
+    currentDescriptionDiv.innerHTML = description || this.getDescriptionText();
   }
 
   updateForecast() {
@@ -97,9 +102,17 @@ class WeatherView extends Component {
     }
   }
 
-  handleForecastItemClick(forecastIndex, mode) {
-    if (mode === 'hourly') {
+  handleForecastItemClick(key) {
+    debugger;
+    const forecastData = this.weatherData.hourly[key];
+    if (key === undefined || !forecastData) {
+      return;
     }
+    console.log('clicked');
+    const temp = this.getTempText(forecastData);
+    const description = this.getDescriptionText(forecastData);
+    this.updateCurrentTemp(temp);
+    this.updateCurrentDescription(description);
   }
 
   render() {

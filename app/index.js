@@ -1,23 +1,28 @@
-const { ipcRenderer } = require("electron");
-const { WEATHER_API_KEY, MSG_TYPES } = require("./constants");
+const { ipcRenderer } = require('electron');
+const { WEATHER_API_KEY, MSG_TYPES } = require('./constants');
 let darkMode = false;
 const {
   MusicPlayerView,
-} = require("./Components/MusicPlayerView/MusicPlayerView");
-const { WeatherView } = require("./Components/WeatherView/WeatherView");
-const { DateTimeView } = require("./Components/DateTimeView/DateTimeView");
+} = require('./Components/MusicPlayerView/MusicPlayerView');
+const { WeatherView } = require('./Components/WeatherView/WeatherView');
+const { DateTimeView } = require('./Components/DateTimeView/DateTimeView');
 const {
   RotaryController: RotaryControllerClass,
-} = require("./utils/Classes/RotaryController");
+} = require('./utils/Classes/RotaryController');
+
+const eventEmitter = new EventEmitter();
 
 // All components
 const MusicPlayerComponent = new MusicPlayerView();
 const TimeComponent = new DateTimeView();
-const WeatherViewComponent = new WeatherView({ window });
+const WeatherViewComponent = new WeatherView({
+  window,
+  document,
+});
 
 // mounting components
-const screenA = document.getElementById("screen-a");
-const screenB = document.getElementById("screen-b");
+const screenA = document.getElementById('screen-a');
+const screenB = document.getElementById('screen-b');
 
 TimeComponent.mount(screenA);
 TimeComponent.render();
@@ -25,6 +30,9 @@ TimeComponent.render();
 WeatherViewComponent.mount(screenB);
 WeatherViewComponent.render();
 
+const actions = {
+  'forecast-item-0': () => WeatherViewComponent.handleForecastItemClick(0),
+};
 const RotaryController = new RotaryControllerClass(document);
 
 document.onkeydown = (e) => {
@@ -36,6 +44,11 @@ document.onkeydown = (e) => {
   }
   if (e.keyCode === 32) {
     RotaryController.handleClick();
+    const el = RotaryController.getCurrentHTMLElement();
+    console.log(el.onClick);
+    if (el.onClick) {
+      el.onClick();
+    }
   }
 };
 
@@ -56,10 +69,10 @@ ipcRenderer.on(MSG_TYPES.SPOTIFY, (event, data) => {
 
 ipcRenderer.on(MSG_TYPES.CONTROL, (event, data) => {
   console.log(`Renderer received: `, data);
-  if (data.action === "left" || data.action === 'right') {
+  if (data.action === 'left' || data.action === 'right') {
     RotaryController.handleMove(data.amount);
   }
-  if (data.action === "press") {
+  if (data.action === 'press') {
     RotaryController.handleClick();
   }
 });
@@ -76,17 +89,17 @@ function processSpotifyData(spotifyData) {
   return {
     trackId,
     playerEvent,
-    duration: duration === "undefined" ? null : parseInt(duration),
-    position: position === "undefined" ? null : parseInt(position),
+    duration: duration === 'undefined' ? null : parseInt(duration),
+    position: position === 'undefined' ? null : parseInt(position),
   };
 }
 
 function toggleDarkMode() {
   darkMode = !darkMode;
-  let modeClassName = darkMode ? "dark-mode" : "light-mode";
-  let removeClassName = darkMode ? "light-mode" : "dark-mode";
+  let modeClassName = darkMode ? 'dark-mode' : 'light-mode';
+  let removeClassName = darkMode ? 'light-mode' : 'dark-mode';
 
-  const body = document.getElementsByTagName("body")[0];
+  const body = document.getElementsByTagName('body')[0];
   body.classList.remove(removeClassName);
   body.classList.add(modeClassName);
 }

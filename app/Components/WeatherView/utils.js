@@ -1,4 +1,4 @@
-const cleanWeatherDataPerTimeUnit = (data) => {
+const cleanHourlyOrCurrentWeatherData = (data) => {
   if (!data) {
     return null;
   }
@@ -6,6 +6,31 @@ const cleanWeatherDataPerTimeUnit = (data) => {
   return {
     temp: data.temp,
     feelsLike: data.feels_like,
+    windSpeed: msTokmH(data.wind_speed),
+    description: data.weather[0].description,
+    main: data.weather[0].main,
+    conditionId: data.weather[0].id,
+    iconId: data.weather[0].icon,
+    rain: data.rain,
+    snow: data.snow,
+    humidity: data.humidity,
+    prob: data.pop,
+  };
+};
+
+const cleanDailyWeatherData = (data) => {
+  if (!data) {
+    return null;
+  }
+
+  return {
+    temp: data.temp.day,
+    tempHigh: data.temp.max,
+    tempLow: data.temp.min,
+    feelsLike: data.feels_like.day,
+    feelsLikeEve: data.feels_like.eve,
+    feelsLikeMorn: data.feels_like.morn,
+    feelsLikeNight: data.feels_like.night,
     windSpeed: msTokmH(data.wind_speed),
     description: data.weather[0].description,
     main: data.weather[0].main,
@@ -29,12 +54,12 @@ const cleanWeatherData = (data) => {
   }
   const { current, daily, hourly } = data;
   const cleanedDaily = daily.map((dailyWeather) =>
-    cleanWeatherDataPerTimeUnit(dailyWeather)
+    cleanDailyWeatherData(dailyWeather)
   );
   const cleanedHourly = hourly.map((hourlyWeather) =>
-    cleanWeatherDataPerTimeUnit(hourlyWeather)
+    cleanHourlyOrCurrentWeatherData(hourlyWeather)
   );
-  const cleanedCurrent = cleanWeatherDataPerTimeUnit(current);
+  const cleanedCurrent = cleanHourlyOrCurrentWeatherData(current);
 
   return {
     current: cleanedCurrent,
