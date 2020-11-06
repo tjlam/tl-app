@@ -9,8 +9,7 @@ const { DateTimeView } = require('./Components/DateTimeView/DateTimeView');
 const {
   RotaryController: RotaryControllerClass,
 } = require('./utils/Classes/RotaryController');
-
-const eventEmitter = new EventEmitter();
+const { WeatherControllerClass } = require('./Controller/WeatherController');
 
 // All components
 const MusicPlayerComponent = new MusicPlayerView();
@@ -28,11 +27,7 @@ TimeComponent.mount(screenA);
 TimeComponent.render();
 
 WeatherViewComponent.mount(screenB);
-WeatherViewComponent.render();
 
-const actions = {
-  'forecast-item-0': () => WeatherViewComponent.handleForecastItemClick(0),
-};
 const RotaryController = new RotaryControllerClass(document);
 
 document.onkeydown = (e) => {
@@ -43,19 +38,30 @@ document.onkeydown = (e) => {
     RotaryController.handleMove(2);
   }
   if (e.keyCode === 32) {
-    RotaryController.handleClick();
     const el = RotaryController.getCurrentHTMLElement();
-    console.log(el.onClick);
-    if (el.onClick) {
-      el.onClick();
-    }
+
+    const clickCallbacks = getClickCallbacks(el.id);
+    RotaryController.handleClick(clickCallbacks);
   }
 };
+
+const getClickCallbacks = (id) => {
+  return () => {
+    weatherController.handleClick(id);
+  };
+};
+
+const weatherController = new WeatherControllerClass({
+  window,
+  WeatherViewComponent,
+});
 
 // loop every second
 function loop() {
   TimeComponent.render();
   // MusicPlayerComponent.incrementPosition();
+
+  weatherController.renderWeatherView();
   var t = setTimeout(loop, 1000);
 }
 

@@ -1,129 +1,76 @@
 const { Component } = require('../../utils/Classes/Component');
 const FILE_TEMPLATE = './app/Components/WeatherView/weather-view-template.html';
-const { getWeatherData } = require('../../utils/actions/weatherActions');
-const { cleanWeatherData, tempToText } = require('./utils');
+const { tempToText } = require('./utils');
 const { ForecastView } = require('./ForecastView');
+const { WeatherDetailsView } = require('./WeatherDetailsView');
 class WeatherView extends Component {
   constructor(initialProps) {
     super({ templateFileName: FILE_TEMPLATE, initialProps });
 
-    const { window } = initialProps;
-    this.document = initialProps.document;
     this.props = initialProps;
-    this.window = window;
-    this.weatherData = {};
-    this.forecastView = new ForecastView({
-      document,
-    });
+    this.weatherData = initialProps.weatherData;
+    this.forecastView = new ForecastView({});
+    this.weatherDetailsView = new WeatherDetailsView({});
   }
 
   async onMount() {
-    // retrieve weather info
     const forecastDiv = this.template.querySelectorAll('#forecast-wrapper')[0];
     this.forecastView.mount(forecastDiv);
-    await this.updateWeatherData();
+
+    const detailsDiv = this.template.querySelectorAll(
+      '#weather-details-mount'
+    )[0];
+    this.weatherDetailsView.mount(detailsDiv);
   }
 
-  getTempText(weatherData) {
-    if (!weatherData && !this.weatherData.current) {
+  getTempText() {
+    if (!this.weatherData.display) {
       return null;
     }
-    const { temp } = weatherData || this.weatherData.current;
+    const { temp } = this.weatherData.display;
     return tempToText(temp);
   }
 
-  getDescriptionText(weatherData) {
-    if (!this.weatherData.current || !weatherData) {
+  getDescriptionText() {
+    if (!this.weatherData.display) {
       return null;
     }
-    const { description, feelsLike } = weatherData || this.weatherData.current;
+    const { description, feelsLike } = this.weatherData.display;
     return `${description}, feels like ${tempToText(feelsLike)}`;
   }
 
-  writeWeatherData() {
-    this.window.localStorage.setItem(
-      'weatherData',
-      JSON.stringify(this.weatherData)
-    );
-    const date = new Date();
-    const lastUpdated = date.toISOString();
-    this.window.localStorage.setItem('lastUpdated', lastUpdated);
-  }
-
-  readWeatherData() {
-    const weatherDataString = this.window.localStorage.getItem('weatherData');
-    return JSON.parse(weatherDataString);
-  }
-
-  hasUpdatedWeather() {
-    const lastUpdatedTimeString = this.window.localStorage.getItem(
-      'lastUpdated'
-    );
-    const savedWeatherData = this.readWeatherData();
-
-    if (!savedWeatherData || !lastUpdatedTimeString) {
-      return false;
-    }
-
-    // check if weather was updated in the last 30 mins
-    const lastUpdatedTimestamp = new Date(lastUpdatedTimeString);
-    const currentTimestamp = new Date();
-    const diff = Math.floor(
-      (currentTimestamp - lastUpdatedTimestamp) / 1000 / 60
-    );
-    return diff < 30;
-  }
-
-  async updateWeatherData() {
-    const weatherData = await getWeatherData();
-    console.log(weatherData);
-    const cleanedData = cleanWeatherData(weatherData);
-    this.weatherData = cleanedData;
-    this.writeWeatherData();
-    console.log(cleanedData);
-  }
-
-  updateCurrentTemp(temp) {
+  updateCurrentTemp() {
     const currentTempDiv = this.template.querySelectorAll('#current-temp')[0];
-    currentTempDiv.innerHTML = temp || this.getTempText();
+    currentTempDiv.innerHTML = this.getTempText();
   }
 
-  updateCurrentDescription(description) {
+  updateCurrentDescription() {
     const currentDescriptionDiv = this.template.querySelectorAll(
       '#current-description'
     )[0];
-    currentDescriptionDiv.innerHTML = description || this.getDescriptionText();
+    currentDescriptionDiv.innerHTML = this.getDescriptionText();
   }
 
   updateForecast() {
-    const { hourly } = this.weatherData;
-    if (hourly) {
-      this.forecastView.render({ forecastData: hourly });
+    const { forecast, forecastType } = this.weatherData;
+    if (forecast) {
+      this.forecastView.render({ forecastData: forecast, forecastType });
     }
   }
 
-  handleForecastItemClick(key) {
-    debugger;
-    const forecastData = this.weatherData.hourly[key];
-    if (key === undefined || !forecastData) {
-      return;
+  updateDetails() {
+    const { display } = this.weatherData;
+    if (display) {
+      this.weatherDetailsView.render({ weatherDetails: display });
     }
-    console.log('clicked');
-    const temp = this.getTempText(forecastData);
-    const description = this.getDescriptionText(forecastData);
-    this.updateCurrentTemp(temp);
-    this.updateCurrentDescription(description);
   }
 
-  render() {
-    if (!this.hasUpdatedWeather()) {
-      this.updateWeatherData();
-    }
+  render({ weatherData }) {
+    this.weatherData = weatherData;
     this.updateForecast();
+    this.updateDetails();
     this.updateCurrentTemp();
     this.updateCurrentDescription();
-
-    var t = setTimeout(this.render.bind(this), 1000);
   }
 }
 

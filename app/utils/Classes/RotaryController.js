@@ -100,8 +100,6 @@ class RotaryController {
       this.digAddress();
       this.handleSelect(this.address, 0);
     } else if (callBack) {
-      // call on click function
-      console.log('something to do');
       callBack();
     }
   }
