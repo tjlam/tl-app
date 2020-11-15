@@ -29,10 +29,11 @@ const cleanHourlyOrCurrentWeatherData = (data) => {
     main: data.weather[0].main,
     conditionId: data.weather[0].id,
     iconId: data.weather[0].icon,
-    rain: data.rain,
-    snow: data.snow,
+    rain: data.rain ? data.rain['1h'] : null,
+    snow: data.snow ? data.snow['1h'] : null,
     humidity: data.humidity,
     prob: data.pop,
+    pressure: data.pressure,
   };
 };
 
@@ -40,11 +41,11 @@ const cleanDailyWeatherData = (data) => {
   if (!data) {
     return null;
   }
-
   return {
     temp: data.temp.day,
     tempHigh: data.temp.max,
     tempLow: data.temp.min,
+    tempHighLow: [data.temp.max, data.temp.min],
     feelsLike: data.feels_like.day,
     feelsLikeEve: data.feels_like.eve,
     feelsLikeMorn: data.feels_like.morn,
@@ -58,12 +59,20 @@ const cleanDailyWeatherData = (data) => {
     snow: data.snow,
     humidity: data.humidity,
     prob: data.pop,
+    sunrise: utcToLocal(data.sunrise),
+    sunset: utcToLocal(data.sunset),
   };
 };
 
 const msTokmH = (metersPerSec) => {
   const kmh = metersPerSec * 3.6;
   return kmh.toFixed(1);
+};
+
+const utcToLocal = (utcSecs) => {
+  let date = new Date(0);
+  date.setUTCSeconds(utcSecs);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 };
 
 const cleanWeatherData = (data) => {

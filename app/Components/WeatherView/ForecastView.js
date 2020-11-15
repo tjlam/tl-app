@@ -42,7 +42,14 @@ class ForecastView extends Component {
         : indexToDay(timeId);
     // update icon
     const iconDiv = forecastItemDiv.querySelectorAll('.icon')[0];
-    iconDiv.innerHTML = iconId;
+    iconDiv.src = this.getIconFile(iconId);
+  }
+
+  getIconFile(iconId) {
+    const prefix = this.isDarkMode
+      ? './assets/icons/light/'
+      : './assets/icons/dark/';
+    return `${prefix}${iconId}.svg`;
   }
 
   render({ forecastData, forecastType }) {

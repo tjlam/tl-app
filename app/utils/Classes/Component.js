@@ -30,6 +30,10 @@ class Component {
     this.onMount();
   }
 
+  getElement(id) {
+    return this.template.querySelectorAll(id)[0];
+  }
+
   onMount() {}
 
   dismount(parentElement) {

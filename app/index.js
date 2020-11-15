@@ -17,6 +17,7 @@ const TimeComponent = new DateTimeView();
 const WeatherViewComponent = new WeatherView({
   window,
   document,
+  isDarkMode: false,
 });
 
 // mounting components
@@ -55,6 +56,7 @@ const weatherController = new WeatherControllerClass({
   window,
   WeatherViewComponent,
 });
+weatherController.handleForecastModeToggle();
 
 // loop every second
 function loop() {

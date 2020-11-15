@@ -15,9 +15,9 @@ const indexToHour = (index) => {
   const currHour = today.getHours();
   const futureHour = (currHour + index) % 24;
   if (futureHour === 0) {
-    return 12;
+    return '12am';
   }
-  return futureHour > 12 ? futureHour - 12 : futureHour;
+  return futureHour > 12 ? `${futureHour - 12}pm` : `${futureHour}am`;
 };
 
 module.exports = {

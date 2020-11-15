@@ -18,7 +18,6 @@ class WeatherController {
 
   async getUpdatedWeather() {
     const weatherData = await DataStore.getWeatherData();
-    console.log(weatherData);
     const cleanedData = utils.cleanWeatherData(weatherData);
     return cleanedData;
   }
@@ -61,15 +60,19 @@ class WeatherController {
     if (this.selectedForecastIndex !== 0) {
       return {
         display: weatherData[this.forecastType][this.selectedForecastIndex],
+        details: weatherData[this.forecastType][this.selectedForecastIndex],
         forecast: weatherData[this.forecastType],
         forecastType: this.forecastType,
+        selectedForecastIndex: this.selectedForecastIndex,
       };
     }
 
     return {
       display: weatherData.current,
+      details: weatherData[this.forecastType][this.selectedForecastIndex],
       forecast: weatherData[this.forecastType],
       forecastType: this.forecastType,
+      selectedForecastIndex: this.selectedForecastIndex,
     };
   }
 
