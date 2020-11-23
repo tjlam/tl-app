@@ -11,7 +11,6 @@ const {
   RotaryController: RotaryControllerClass,
 } = require('./utils/Classes/RotaryController');
 const { WeatherControllerClass } = require('./Controller/WeatherController');
-const WeatherController = require('./Controller/WeatherController');
 
 // All components
 const MusicPlayerComponent = new MusicPlayerView();
@@ -37,6 +36,15 @@ const weatherController = new WeatherControllerClass({
 });
 
 const RotaryController = new RotaryControllerClass(document);
+
+anime({
+  targets: '.outer-dot',
+  r: [10, 8],
+  duration: 700,
+  direction: 'alternate',
+  loop: true,
+  easing: 'easeOutExpo',
+});
 
 document.onkeydown = (e) => {
   if (e.keyCode === 75) {
@@ -83,6 +91,7 @@ ipcRenderer.on(MSG_TYPES.CONTROL, (event, data) => {
   console.log(`Renderer received: `, data);
   if (data.action === 'left' || data.action === 'right') {
     RotaryController.handleMove(data.amount);
+    weatherController.handleDotMove(data.amount);
   }
   if (data.action === 'press') {
     RotaryController.handleClick();
