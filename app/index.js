@@ -1,5 +1,6 @@
 const { ipcRenderer } = require('electron');
-const { WEATHER_API_KEY, MSG_TYPES } = require('./constants');
+const { MSG_TYPES } = require('./constants');
+
 let darkMode = false;
 const {
   MusicPlayerView,
@@ -10,6 +11,7 @@ const {
   RotaryController: RotaryControllerClass,
 } = require('./utils/Classes/RotaryController');
 const { WeatherControllerClass } = require('./Controller/WeatherController');
+const WeatherController = require('./Controller/WeatherController');
 
 // All components
 const MusicPlayerComponent = new MusicPlayerView();
@@ -29,14 +31,21 @@ TimeComponent.render();
 
 WeatherViewComponent.mount(screenB);
 
+const weatherController = new WeatherControllerClass({
+  window,
+  WeatherViewComponent,
+});
+
 const RotaryController = new RotaryControllerClass(document);
 
 document.onkeydown = (e) => {
   if (e.keyCode === 75) {
     RotaryController.handleMove(-2);
+    weatherController.handleDotMove(-10);
   }
   if (e.keyCode === 76) {
     RotaryController.handleMove(2);
+    weatherController.handleDotMove(10);
   }
   if (e.keyCode === 32) {
     const el = RotaryController.getCurrentHTMLElement();
@@ -52,16 +61,11 @@ const getClickCallbacks = (id) => {
   };
 };
 
-const weatherController = new WeatherControllerClass({
-  window,
-  WeatherViewComponent,
-});
 weatherController.handleForecastModeToggle();
 
 // loop every second
 function loop() {
   TimeComponent.render();
-  // MusicPlayerComponent.incrementPosition();
 
   weatherController.renderWeatherView();
   var t = setTimeout(loop, 1000);

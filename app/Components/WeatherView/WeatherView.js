@@ -8,14 +8,16 @@ class WeatherView extends Component {
     super({ templateFileName: FILE_TEMPLATE, initialProps });
 
     this.weatherData = initialProps.weatherData;
+    this.svgPath = initialProps.svgPath;
     this.forecastView = new ForecastView({});
     this.weatherDetailsView = new WeatherDetailsView({});
     this.isDarkMode = initialProps.isDarkMode;
+    this.forecastPoints = [];
   }
 
   async onMount() {
     const forecastDiv = this.template.querySelectorAll('#forecast-wrapper')[0];
-    this.forecastView.mount(forecastDiv);
+    // this.forecastView.mount(forecastDiv);
 
     const detailsDiv = this.template.querySelectorAll(
       '#weather-details-mount'
@@ -91,14 +93,22 @@ class WeatherView extends Component {
     }
   }
 
-  render({ weatherData }) {
+  updateForecastLine() {
+    const forecastLine = this.getElement('#forecast-line');
+    forecastLine.setAttribute('d', this.svgPath);
+  }
+
+  render({ weatherData, svgPath, forecastPoints }) {
     this.weatherData = weatherData;
-    this.updateForecast();
+    this.svgPath = svgPath;
+    this.forecastPoints = forecastPoints;
+    // this.updateForecast();
     this.updateDetails();
     this.updateCurrentTemp();
     this.updateCurrentDescription();
     this.updateCurrentDay();
     this.updateCurrentIcon();
+    this.updateForecastLine();
   }
 }
 
